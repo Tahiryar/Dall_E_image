@@ -1,11 +1,12 @@
 import os
 import openai
 from dotenv import load_dotenv
+import requests
 
 # Load environment variables
 load_dotenv()
 
-# Get API key from .env file
+# Get API key
 api_key = os.getenv('OPENAI_API_KEY')
 
 if not api_key:
@@ -22,5 +23,13 @@ response = openai.Image.create(
     size="1024x1024"
 )
 
-# Print response
-print(response)
+# Extract image URL
+image_url = response['data'][0]['url']
+print("Image URL:", image_url)
+
+# Save the image
+img_data = requests.get(image_url).content
+with open("static/generated_image.png", "wb") as handler:
+    handler.write(img_data)
+
+print("Image saved as static/generated_image.png")
